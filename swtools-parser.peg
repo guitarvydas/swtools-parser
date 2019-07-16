@@ -1,0 +1,611 @@
+# borrowed from https://github.com/antlr/grammars-v4/blob/master/pascal/pascal.g4
+# and hacked on by Paul Tarvydas to produce a parser that can parse the source files
+# for Software Tools in Pascal (this parser is not intended to parse Pascal in general)
+# 
+# /*
+# BSD License
+# Copyright (c) 2013, Tom Everett
+# All rights reserved.
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions
+# are met:
+# 1. Redistributions of source code must retain the above copyright
+#    notice, this list of conditions and the following disclaimer.
+# 2. Redistributions in binary form must reproduce the above copyright
+#    notice, this list of conditions and the following disclaimer in the
+#    documentation and/or other materials provided with the distribution.
+# 3. Neither the name of Tom Everett nor the names of its contributors
+#    may be used to endorse or promote products derived from this software
+#    without specific prior written permission.
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+# "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+# LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+# A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+# HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+# SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+# LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+# DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+# THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+# */
+# /*
+# Adapted from pascal.g by  Hakki Dogusan, Piet Schoutteten and Marton Papp
+# */
+# 
+# grammar pascal;
+
+#program
+#   <- programHeading (INTERFACE)? block DOT
+
+
+#programHeading
+#   <- PROGRAM identifier (LPAREN identifierList RPAREN)? SEMI
+#    /UNIT identifier SEMI
+
+swToolsProgram <- (FILE_CUT COMMENT* block)+ EndOfFile
+#swtoolsProgram <- Spacing block EndOfFile
+
+identifier <- IDENT
+
+
+block <- (labelDeclarationPart / constantDefinitionPart / typeDefinitionPart / variableDeclarationPart / procedureAndFunctionDeclarationPart / usesUnitsPart / IMPLEMENTATION)* compoundStatement
+
+
+usesUnitsPart <- USES identifierList SEMI
+
+
+labelDeclarationPart <- LABEL label (COMMA label)* SEMI
+
+
+label <- unsignedInteger
+
+
+constantDefinitionPart <- CONST (constantDefinition SEMI) +
+
+
+constantDefinition <- identifier EQUAL constant
+
+
+constantChr <- CHR LPAREN unsignedInteger RPAREN
+
+
+constant <- unsignedNumber
+   / sign unsignedNumber
+   / identifier
+   / sign identifier
+   / string
+   / constantChr
+
+
+unsignedNumber <- unsignedInteger
+   / unsignedReal
+
+
+unsignedInteger <- NUM_INT
+
+
+unsignedReal <- NUM_REAL
+
+
+sign <- PLUS
+   / MINUS
+
+
+bool <- TRUE
+   / FALSE
+
+
+string <- STRING_LITERAL
+
+
+typeDefinitionPart <- TYPE (typeDefinition SEMI) +
+
+
+typeDefinition <- identifier EQUAL (type / functionType / procedureType)
+
+
+functionType <- FUNCTION (formalParameterList)? COLON resultType
+
+
+procedureType <- PROCEDURE (formalParameterList)?
+
+
+type <- simpleType
+   / structuredType
+   / pointerType
+
+
+simpleType <- scalarType
+   / subrangeType
+   / typeIdentifier
+   / stringtype
+
+
+scalarType <- LPAREN identifierList RPAREN
+
+
+subrangeType <- constant DOTDOT constant
+
+
+typeIdentifier <- identifier
+   / (CHAR / BOOLEAN / INTEGER / REAL / STRING)
+
+
+structuredType <- PACKED unpackedStructuredType
+   / unpackedStructuredType
+
+
+unpackedStructuredType <- arrayType
+   / recordType
+   / setType
+   / fileType
+
+
+stringtype <- STRING LBRACK (identifier / unsignedNumber) RBRACK
+
+
+arrayType <- ARRAY LBRACK typeList RBRACK OF componentType
+   / ARRAY LBRACK2 typeList RBRACK2 OF componentType
+
+
+typeList <- indexType (COMMA indexType)*
+
+
+indexType <- simpleType
+
+
+componentType <- type
+
+
+recordType <- RECORD fieldList? END
+
+
+fieldList <- fixedPart (SEMI variantPart)?
+   / variantPart
+
+
+fixedPart <- recordSection (SEMI recordSection)*
+
+
+recordSection <- identifierList COLON type
+
+
+variantPart <- CASE tag OF variant (SEMI variant)*
+
+
+tag <- identifier COLON typeIdentifier
+   / typeIdentifier
+
+
+variant <- constList COLON LPAREN fieldList RPAREN
+
+
+setType <- SET OF baseType
+
+
+baseType <- simpleType
+
+
+fileType <- FILE OF type
+   / FILE
+
+
+pointerType <- POINTER typeIdentifier
+
+
+variableDeclarationPart <- VAR variableDeclaration (SEMI variableDeclaration)* SEMI
+
+
+variableDeclaration <- identifierList COLON type
+
+
+procedureAndFunctionDeclarationPart <- procedureOrFunctionDeclaration SEMI
+
+
+procedureOrFunctionDeclaration <- procedureDeclaration
+   / functionDeclaration
+
+
+procedureDeclaration <- PROCEDURE identifier Spacing (formalParameterList)? SEMI block
+
+
+formalParameterList <- LPAREN formalParameterSection (SEMI formalParameterSection)* RPAREN
+
+
+formalParameterSection <- parameterGroup
+   / VAR parameterGroup
+   / FUNCTION parameterGroup
+   / PROCEDURE parameterGroup
+
+
+parameterGroup <- identifierList Spacing COLON typeIdentifier
+
+
+identifierList <- identifier (COMMA identifier)*
+
+
+constList <- constant (COMMA constant)*
+
+
+functionDeclaration <- FUNCTION identifier (formalParameterList)? COLON resultType SEMI block
+
+
+resultType <- typeIdentifier
+
+
+statement <- label COLON unlabelledStatement
+   / unlabelledStatement
+
+
+unlabelledStatement <- structuredStatement /
+		    simpleStatement
+
+
+simpleStatement <- assignmentStatement
+   / procedureStatement
+   / gotoStatement
+
+
+assignmentStatement <- variable ASSIGN expression
+
+
+variable <- (AT identifier / identifier) (LBRACK expression (COMMA expression)* RBRACK / LBRACK2 expression (COMMA expression)* RBRACK2 / DOT identifier / POINTER)*
+
+
+expression <- simpleExpression (relationaloperator expression)?
+
+
+relationaloperator <- EQUAL
+   / NOT_EQUAL
+   / LT
+   / LE
+   / GE
+   / GT
+   / IN
+
+
+simpleExpression <- term (additiveoperator simpleExpression)?
+
+
+additiveoperator <- PLUS
+   / MINUS
+   / OR
+
+
+term <- signedFactor (multiplicativeoperator term)?
+
+
+multiplicativeoperator <- STAR
+   / SLASH
+   / DIV
+   / MOD
+   / AND
+
+
+signedFactor <- (PLUS / MINUS)? factor
+
+
+factor <- variable
+   / LPAREN expression RPAREN
+   / functionDesignator
+   / unsignedConstant
+   / set
+   / NOT factor
+   / bool
+
+
+unsignedConstant <- unsignedNumber
+   / constantChr
+   / string
+   / cNIL
+
+
+functionDesignator <- identifier LPAREN parameterList RPAREN
+
+
+parameterList <- actualParameter (COMMA actualParameter)*
+
+
+set <- LBRACK elementList RBRACK
+   / LBRACK2 elementList RBRACK2
+
+
+elementList <- elementLst?
+
+elementLst <- element (COMMA element)*
+
+
+element <- expression (DOTDOT expression)?
+
+
+procedureStatement <- identifier (LPAREN parameterList RPAREN)?
+
+
+actualParameter <- expression parameterwidth*
+
+
+parameterwidth <- ':' expression
+
+
+gotoStatement <- GOTO label
+
+
+structuredStatement <- compoundStatement
+   / conditionalStatement
+   / repetetiveStatement
+   / withStatement
+
+
+compoundStatement <- BEGIN statements END
+
+
+statements <- statement (SEMI statement)*
+
+
+conditionalStatement <- ifStatement
+   / caseStatement
+
+
+ifStatement <- IF expression THEN statement (ELSE statement)?
+
+
+caseStatement <- CASE expression OF caseListElement (SEMI caseListElement)* (SEMI ELSE statements)? END
+
+
+caseListElement <- constList COLON statement
+
+
+repetetiveStatement <- whileStatement
+   / repeatStatement
+   / forStatement
+
+
+whileStatement <- WHILE expression DO statement
+
+
+repeatStatement <- REPEAT statements UNTIL expression
+
+
+forStatement <- FOR identifier ASSIGN forList DO statement
+
+
+forList <- initialValue (TO / DOWNTO) finalValue
+
+
+initialValue <- expression
+
+
+finalValue <- expression
+
+
+withStatement <- WITH recordVariableList DO statement
+
+
+recordVariableList <- variable (COMMA variable)*
+
+
+
+
+AND <- 'and'
+ARRAY <- 'array' Spacing
+BEGIN <- 'begin' Spacing
+BOOLEAN <-'boolean' Spacing
+CASE <- 'case' Spacing
+CHAR <- 'char' Spacing
+CHR <- 'chr' Spacing
+CONST <- 'const' Spacing
+DIV <- 'div' Spacing
+DOWNTO <- 'downto' Spacing
+DO <- 'do' Spacing
+ELSE <- 'else' Spacing
+END <- 'end' Spacing
+FILE <- 'file' Spacing
+FOR <- 'for' Spacing
+FUNCTION <- 'function' Spacing
+GOTO <- 'goto' Spacing
+IF <- 'if' Spacing
+INTEGER <- 'integer' Spacing
+IN <- 'in' Spacing
+LABEL <- 'label' Spacing
+MOD <- 'mod' Spacing
+cNIL <- 'nil' Spacing
+NOT <- 'not' Spacing
+OF <- 'of' Spacing
+OR <- 'or' Spacing
+PACKED <- 'packed' Spacing
+PROCEDURE <- 'procedure' Spacing
+PROGRAM <- 'program' Spacing
+REAL <- 'real' Spacing
+RECORD <- 'record' Spacing
+REPEAT <- 'repeat' Spacing
+SET <- 'set' Spacing
+THEN <- 'then' Spacing
+TO <- 'to' Spacing
+TYPE <- 'type' Spacing
+UNTIL <- 'until' Spacing
+VAR <- 'var' Spacing
+WHILE <- 'while' Spacing
+WITH <- 'with' Spacing
+PLUS <- '+' Spacing
+MINUS <- '-' Spacing
+
+
+
+STAR <- '*' Spacing
+
+
+
+SLASH <- '/' Spacing
+
+
+
+ASSIGN <- ':=' Spacing
+
+
+
+COMMA <- ',' Spacing
+
+
+
+SEMI <- ';' Spacing
+
+
+
+COLON <- ':' Spacing
+
+
+
+EQUAL <- '=' Spacing
+
+
+
+NOT_EQUAL <- '<>' Spacing
+
+
+
+LT <- '<' Spacing
+
+
+
+LE <- '<=' Spacing
+
+
+
+GE <- '>=' Spacing
+
+
+
+GT <- '>' Spacing
+
+
+
+LPAREN <- '(' Spacing
+
+
+
+RPAREN <- ')' Spacing
+
+
+
+LBRACK <- '[' Spacing
+
+
+
+LBRACK2 <- '(.' Spacing
+
+
+
+RBRACK <- ']' Spacing
+
+
+
+RBRACK2 <- '.)' Spacing
+
+
+
+POINTER <- '^' Spacing
+
+
+
+AT <- '@' Spacing
+
+
+
+DOT <- '.' Spacing
+
+
+
+DOTDOT <- '..' Spacing
+
+
+
+LCURLY <- '{' Spacing
+
+
+
+RCURLY <- '}' Spacing
+
+
+
+UNIT <- 'unit' Spacing
+
+
+
+INTERFACE <- 'interface' Spacing
+USES <- 'uses' Spacing
+STRING <- 'string' Spacing
+IMPLEMENTATION <- 'implementation' Spacing
+TRUE <- 'true' Spacing
+FALSE <- 'false' Spacing
+
+keyword <- ('and' / 'array' / 'begin' / 'boolean' / 'case' / 'char' / 
+	 'chr' / 'const' / 'div' / 'do' / 'downto' / 'else' / 'end' / 'file' /
+	 'for' / 'function' / 'goto' / 'if' / 'in' / 'integer' / 
+	 'label' / 'mod' / 'nil' / 'not' / 'of' / 'or' / 'packed' / 
+	 'procedure' / 'program' / 'real' / 'record' / 'repeat' / 
+	 'set' / 'then' / 'to' / 'type' / 'until' / 'var' / 'while' / 
+	 'with' / 'unit' / 'interface' / 'uses' / 'string' / 
+	 'implementation' / 'true' / 'false')
+
+WS
+    <- pSpace
+#   <- [ \t\r\n] <- skip
+
+
+
+COMMENT <- (COMMENT_1 / COMMENT_2)
+COMMENT_1 <- '(*' .* '*)'
+COMMENT_2 <- '{' NotBrace+ '}'
+NotBrace <- !'}' .
+
+
+
+IDENT <- !keyword [A-Za-z] [A-Z-a-z0-9_]* Spacing
+
+
+
+STRING_LITERAL
+    <- ['] [!']* [']
+#   <- '\'' ('\'\'' / ~ ('\''))* '\''
+
+
+
+NUM_INT <- [0-9]+
+
+
+
+NUM_REAL <- [0-9]+ EXPONENT /
+      [0-9]+ '.' [0-9]+ EXPONENT? /
+      EXPONENT
+#(('.' ('0' .. '9') + (EXPONENT)?)? / EXPONENT)
+
+
+
+EXPONENT <- 'e' ('+' / '-')? [0-9]+
+#   <- ('e') ('+' / '-')? ('0' .. '9') +
+
+
+FILE_CUT <- '-h-' Spacing DIR* FILENAME FILEEXT Spacing NUM_INT EndOfLine
+
+DIR <- IDENT '/'
+FILENAME <- IDENT
+FILEEXT <- '.' IDENT
+
+# boilerplate
+
+Spacing <- (pSpace / COMMENT)* {
+  (:lambda (list) (declare (ignore list))
+      (values)) }
+
+pSpace <- ' ' / '\t' / EndOfLine {
+  (:lambda (list) (declare (ignore list))
+    (values)) }
+
+EndOfLine <- '\r\n' / '\n' / '\r' {
+  (:lambda (list) (declare (ignore list))
+    (values)) }
+
+EndOfFile <- !. {
+  (:lambda (list) (declare (ignore list))
+    (values)) }
