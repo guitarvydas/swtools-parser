@@ -43,8 +43,8 @@
 #   <- PROGRAM identifier (LPAREN identifierList RPAREN)? SEMI
 #    /UNIT identifier SEMI
 
-swToolsProgram <- (FILE_CUT COMMENT* block)+ EndOfFile
-#swtoolsProgram <- Spacing block EndOfFile
+swToolsPrograms <- swToolsProgram+ EndOfFile
+swToolsProgram <- FILE_CUT Spacing block
 
 identifier <- IDENT
 
@@ -272,9 +272,7 @@ additiveoperator <- PLUS
    / MINUS
    / OR
 
-
 term <- signedFactor (multiplicativeoperator term)?
-
 
 multiplicativeoperator <- STAR
    / SLASH
@@ -282,9 +280,7 @@ multiplicativeoperator <- STAR
    / MOD
    / AND
 
-
 signedFactor <- (PLUS / MINUS)? factor
-
 
 factor <- variable
    / LPAREN expression RPAREN
@@ -546,7 +542,7 @@ keyword <- ('and' / 'array' / 'begin' / 'boolean' / 'case' / 'char' /
 	 'procedure' / 'program' / 'real' / 'record' / 'repeat' / 
 	 'set' / 'then' / 'to' / 'type' / 'until' / 'var' / 'while' / 
 	 'with' / 'unit' / 'interface' / 'uses' / 'string' / 
-	 'implementation' / 'true' / 'false')
+	 'implementation' / 'true' / 'false') ![a-zA-Z]
 
 WS
     <- pSpace

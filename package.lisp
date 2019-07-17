@@ -1,7 +1,9 @@
-(DEFPACKAGE :PEG-GRAMMAR (:USE :CL :ESRAP))
+(DEFPACKAGE :PEG-GRAMMAR 
+  (:USE :CL) 
+  :nicknames '("PG" "pg"))
 
 (defpackage :swtools-parser 
-  (:use :cl :peg-grammar)
+  (:use :cl)
   (:export
    #:generate-code
    ))
