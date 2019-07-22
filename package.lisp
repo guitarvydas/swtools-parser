@@ -1,9 +1,17 @@
 (DEFPACKAGE :PEG-GRAMMAR 
-  (:USE :CL) 
-  :nicknames '("PG" "pg"))
+  ;(:use :common-lisp)
+  (:nicknames "PG" "pg")
+  (:export
+   #:peg-grammar))
+
+(defpackage :empty
+  (:export
+   #:write-qualified))
+
+(defpackage :gr)
 
 (defpackage :swtools-parser 
-  (:use :cl)
   (:export
-   #:generate-code
+   #:file2string
+   #:@create-swtools-parser
    ))
