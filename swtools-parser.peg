@@ -43,7 +43,8 @@
 #   <- PROGRAM identifier (LPAREN identifierList RPAREN)? SEMI
 #    /UNIT identifier SEMI
 
-swToolsPrograms <- swToolsProgram+ EndOfFileXXX
+swToolsPrograms <- swToolsProgram+ EndOfFile
+
 swToolsProgram <- FILE_CUT Spacing block
 
 identifier <- IDENT
@@ -605,7 +606,3 @@ EndOfLine <- '\r\n' / '\n' / '\r' {
 EndOfFile <- !. {
   (:lambda (list) (declare (ignore list))
     (values)) }
-
-EndOfFileXXX <- !. {
-  (:lambda (list) (declare (ignore list))
-    (values) ) }
