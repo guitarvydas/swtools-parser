@@ -1,3 +1,5 @@
+;; experiments with packages vs. WRITE
+
 (ql:quickload :esrap)
 
 (defpackage :empty)
