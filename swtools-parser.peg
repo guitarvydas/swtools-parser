@@ -93,8 +93,8 @@ sign <- PLUS
    / MINUS
 
 
-bool <- rTRUE
-   / rFALSE
+bool <- tokTRUE
+   / tokFALSE
 
 
 string <- STRING_LITERAL
@@ -106,7 +106,7 @@ typeDefinitionPart <- TYPE (typeDefinition SEMI) +
 typeDefinition <- identifier EQUAL (type / functionType / procedureType)
 
 
-functionType <- FUNCTION (formalParameterList)? COLON resultType
+functionType <- tokFUNCTION (formalParameterList)? COLON resultType
 
 
 procedureType <- PROCEDURE (formalParameterList)?
@@ -130,7 +130,7 @@ subrangeType <- constant tokDOTDOT constant
 
 
 typeIdentifier <- identifier
-   / (tokCHAR / tokBOOLEAN / INTEGER / REAL / STRING)
+   / (tokCHAR / tokBOOLEAN / tokINTEGER / REAL / STRING)
 
 
 structuredType <- PACKED unpackedStructuredType
@@ -159,7 +159,7 @@ indexType <- simpleType
 componentType <- type
 
 
-recordType <- RECORD fieldList? END
+recordType <- RECORD fieldList? tokEND
 
 
 fieldList <- fixedPart (SEMI variantPart)?
@@ -188,8 +188,8 @@ setType <- SET OF baseType
 baseType <- simpleType
 
 
-fileType <- FILE OF type
-   / FILE
+fileType <- tokFILE OF type
+   / tokFILE
 
 
 pointerType <- POINTER typeIdentifier
@@ -216,7 +216,7 @@ formalParameterList <- LPAREN formalParameterSection (SEMI formalParameterSectio
 
 formalParameterSection <- parameterGroup
    / VAR parameterGroup
-   / FUNCTION parameterGroup
+   / tokFUNCTION parameterGroup
    / PROCEDURE parameterGroup
 
 
@@ -229,7 +229,7 @@ identifierList <- identifier (COMMA identifier)*
 constList <- constant (COMMA constant)*
 
 
-functionDeclaration <- FUNCTION identifier (formalParameterList)? COLON resultType SEMI block
+functionDeclaration <- tokFUNCTION identifier (formalParameterList)? COLON resultType SEMI block
 
 
 resultType <- typeIdentifier
@@ -259,8 +259,8 @@ expression <- simpleExpression (relationaloperator expression)?
 
 relationaloperator <- EQUAL
    / NOT_EQUAL
-   / LT
-   / LE
+   / tokLT
+   / tokLE
    / GE
    / GT
    / IN
@@ -288,7 +288,7 @@ factor <- variable
    / functionDesignator
    / unsignedConstant
    / set
-   / NOT factor
+   / tokNOT factor
    / bool
 
 
@@ -325,7 +325,7 @@ actualParameter <- expression parameterwidth*
 parameterwidth <- ':' expression
 
 
-gotoStatement <- GOTO label
+gotoStatement <- tokGOTO label
 
 
 structuredStatement <- compoundStatement
@@ -334,7 +334,7 @@ structuredStatement <- compoundStatement
    / withStatement
 
 
-compoundStatement <- tokBEGIN statements END
+compoundStatement <- tokBEGIN statements tokEND
 
 
 statements <- statement (SEMI statement)*
@@ -344,10 +344,10 @@ conditionalStatement <- ifStatement
    / caseStatement
 
 
-ifStatement <- IF expression THEN statement (tokELSE statement)?
+ifStatement <- tokIF expression THEN statement (tokELSE statement)?
 
 
-caseStatement <- tokCASE expression OF caseListElement (SEMI caseListElement)* (SEMI tokELSE statements)? END
+caseStatement <- tokCASE expression OF caseListElement (SEMI caseListElement)* (SEMI tokELSE statements)? tokEND
 
 
 caseListElement <- constList COLON statement
@@ -364,7 +364,7 @@ whileStatement <- WHILE expression tokDO statement
 repeatStatement <- REPEAT statements UNTIL expression
 
 
-forStatement <- FOR identifier ASSIGN forList tokDO statement
+forStatement <- tokFOR identifier ASSIGN forList tokDO statement
 
 
 forList <- initialValue (TO / tokDOWNTO) finalValue
@@ -393,18 +393,18 @@ tokDIV <- 'div' Spacing
 tokDOWNTO <- 'downto' Spacing
 tokDO <- 'do' Spacing
 tokELSE <- 'else' Spacing
-END <- 'end' Spacing
-FILE <- 'file' Spacing
-FOR <- 'for' Spacing
-FUNCTION <- 'function' Spacing
-GOTO <- 'goto' Spacing
-IF <- 'if' Spacing
-INTEGER <- 'integer' Spacing
+tokEND <- 'end' Spacing
+tokFILE <- 'file' Spacing
+tokFOR <- 'for' Spacing
+tokFUNCTION <- 'function' Spacing
+tokGOTO <- 'goto' Spacing
+tokIF <- 'if' Spacing
+tokINTEGER <- 'integer' Spacing
 IN <- 'in' Spacing
 LABEL <- 'label' Spacing
 MOD <- 'mod' Spacing
 tokNIL <- 'nil' Spacing
-NOT <- 'not' Spacing
+tokNOT <- 'not' Spacing
 OF <- 'of' Spacing
 OR <- 'or' Spacing
 PACKED <- 'packed' Spacing
@@ -432,8 +432,8 @@ SEMI <- ';' Spacing
 COLON <- ':' Spacing
 EQUAL <- '=' Spacing
 NOT_EQUAL <- '<>' Spacing
-LT <- '<' Spacing
-LE <- '<=' Spacing
+tokLT <- '<' Spacing
+tokLE <- '<=' Spacing
 GE <- '>=' Spacing
 GT <- '>' Spacing
 LPAREN <- '(' Spacing
@@ -453,8 +453,8 @@ INTERFACE <- 'interface' Spacing
 USES <- 'uses' Spacing
 STRING <- 'string' Spacing
 IMPLEMENTATION <- 'implementation' Spacing
-rTRUE <- 'true' Spacing
-rFALSE <- 'false' Spacing
+tokTRUE <- 'true' Spacing
+tokFALSE <- 'false' Spacing
 
 keyword <- ('and' / 'array' / 'begin' / 'boolean' / 'case' / 'char' / 
 	 'chr' / 'const' / 'div' / 'do' / 'downto' / 'else' / 'end' / 'file' /
