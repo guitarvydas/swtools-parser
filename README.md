@@ -4,7 +4,8 @@ Goal: To create a PEG parser which will minimally parse the Software Tools in Pa
 Goal: To show that closures can take the place of O/S processes (without the baggage of MMUs, etc.).  It should be possible to build pipelines of Software Tools in CL using lambdas.
 
 
-sub-goal: Hand-edit "peg.lisp" until it compiles and runs (correctly) under SBCL.  Current problem: "(VALUES)" is "nothing" and SBCL errors out on "not a list".  The point of using (VALUES) is to reduce the amount of noise inside the parser builder.  The esrap rules that return (VALUES) are things like whitespace.
+sub-goal: Hand-edit "peg.lisp" until it compiles and runs (correctly) under SBCL.  Current problem: "(VALUES)" is "nothing" and SBCL errors out on "not a list".  The point of using (VALUES) is to reduce the amount of noise inside the parser builder.  The esrap rules that return (VALUES) are things like whitespace.  Can I get SBCL to understand (VALUES) as being valid, or do I need to change peg.lisp to return NIL?
+
 
 sub-goal: To demonstrate the parameter lists and (RETURN ...) were a bad idea and can be subsumed by SEND().
 
