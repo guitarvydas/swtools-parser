@@ -82,9 +82,9 @@
                         (ESRAP:CHARACTER-RANGES #\")
                         PG::SPACING))
   (:DESTRUCTURE
-   (Q1 STRING Q2 SPC)
+   (Q1 str Q2 SPC)
    (CL:DECLARE (cl:IGNORE Q1 Q2 SPC))
-   (esrap:TEXT STRING)))
+   (esrap:TEXT str)))
 
 (ESRAP:DEFRULE PG::UQLITERAL
                (CL:AND (ESRAP:CHARACTER-RANGES #\")
@@ -92,9 +92,9 @@
                     (ESRAP:CHARACTER-RANGES #\")
                     PG::SPACING)
   (:DESTRUCTURE
-   (Q1 STRING Q2 SPC)
+   (Q1 str Q2 SPC)
    (CL:DECLARE (cl:IGNORE SPC))
-   `(,Q1 ,@STRING ,Q2)))
+   `(,Q1 ,@str ,Q2)))
 
 (ESRAP:DEFRULE PG::NOTSINGLE
                (CL:AND (ESRAP:! (ESRAP:CHARACTER-RANGES #\')) PG::PCHAR)
@@ -155,7 +155,7 @@
   (:DESTRUCTURE
    (SL N1 N2 N3)
    (CL:DECLARE (cl:IGNORE SL))
-   (cl:CODE-CHAR (cl:PARSE-INTEGER (cl:CONCATENATE 'STRING N1 N2 N3) :RADIX 8))))
+   (cl:CODE-CHAR (cl:PARSE-INTEGER (cl:CONCATENATE 'cl:STRING N1 N2 N3) :RADIX 8))))
 
 (ESRAP:DEFRULE PG::NUMCHAR2
                (CL:AND "\\"
@@ -164,7 +164,7 @@
   (:DESTRUCTURE
    (SL N1 N2)
    (CL:DECLARE (cl:IGNORE SL))
-   (cl:CODE-CHAR (cl:PARSE-INTEGER (cl:CONCATENATE 'STRING N1 N2) :RADIX 8))))
+   (cl:CODE-CHAR (cl:PARSE-INTEGER (cl:CONCATENATE 'cl:STRING N1 N2) :RADIX 8))))
 
 (ESRAP:DEFRULE PG::ANYCHAR (CL:AND (ESRAP:! "\\") esrap::CHARACTER)
   (:DESTRUCTURE (SL C) (CL:DECLARE (cl:IGNORE SL)) C))
