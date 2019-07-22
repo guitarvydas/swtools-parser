@@ -2,11 +2,11 @@
 
 (IN-PACKAGE :peg-grammar)
 
-(ESRAP:DEFRULE PG:PEG-GRAMMAR (cl:AND PG::SPACING (esrap:+ PG::DEFINITION) PG::SPACING PG::ENDOFFILEFORTEST)
+(ESRAP:DEFRULE PG:PEG-GRAMMAR (cl:AND PG::SPACING (esrap:+ PG::DEFINITION) PG::SPACING PG::ENDOFFILE)
   (:DESTRUCTURE
    (SPC DEF SPC2 EOF)
    (CL:DECLARE (cl:IGNORE SPC EOF SPC2))
-   (cons 'CL:PROGN DEF)))
+   (cl:cons 'CL:PROGN DEF)))
 ;   `(CL:PROGN ,@DEF)))
 
 (ESRAP:DEFRULE PG::DEFINITION
@@ -18,7 +18,7 @@
   (:DESTRUCTURE
    (ID ARR E SPC CODE)
    (CL:DECLARE (cl:IGNORE ARR SPC))
-   (cl:IF (NULL CODE)
+   (cl:IF (cl:NULL CODE)
        `(ESRAP:DEFRULE ,(cl:INTERN (cl:STRING-UPCASE ID) :gr) ,E)
      `(ESRAP:DEFRULE ,(cl:INTERN (cl:STRING-UPCASE ID) :gr) ,E ,CODE))))
 
@@ -26,7 +26,7 @@
   (:DESTRUCTURE
    (LB CODE RB)
    (CL:DECLARE (cl:IGNORE LB RB))
-   (READ-FROM-STRING (esrap:TEXT CODE))))
+   (cl:READ-FROM-STRING (esrap:TEXT CODE))))
 
 (ESRAP:DEFRULE PG::NOTBRACE (CL:OR PG::UQLITERAL (CL:AND (ESRAP:! "}") esrap::CHARACTER))
   (:TEXT T)) ;; boolean
@@ -39,9 +39,9 @@
 
 (ESRAP:DEFRULE PG::PSEQUENCE (esrap:* PG::PREFIX)
   (:DESTRUCTURE
-   (&REST PREF)
+   (cl:&REST PREF)
    (cl:IF PREF
-       (cl:IF (CL:AND (cl:CONSP PREF) (> (cl:LENGTH PREF) 1))
+       (cl:IF (CL:AND (cl:CONSP PREF) (cl:> (cl:LENGTH PREF) 1))
            `(CL:AND ,@PREF)
          (cl:FIRST PREF))
      (cl:VALUES))))
@@ -109,7 +109,7 @@
    (LB RANGE RB SPC)
    (CL:DECLARE (cl:IGNORE LB RB SPC))
    (CL:IF (CL:AND (cl:CONSP RANGE)
-            (CL:OR (cl:NOT (= 2 (cl:LENGTH RANGE)))
+            (CL:OR (cl:NOT (cl:= 2 (cl:LENGTH RANGE)))
                 (CL:OR (cl:CONSP (cl:FIRST RANGE)) (cl:CONSP (cl:SECOND RANGE)))))
        `(esrap:CHARACTER-RANGES ,@RANGE)
      `(esrap:CHARACTER-RANGES ,RANGE))))
@@ -228,7 +228,5 @@
   (:LAMBDA (LIST) (CL:DECLARE (cl:IGNORE LIST)) (cl:VALUES)))
 
 (ESRAP:DEFRULE PG::ENDOFFILE (ESRAP:! esrap::CHARACTER)
-  (:LAMBDA (LIST) (CL:DECLARE (cl:IGNORE LIST)) (values)))
+  (:LAMBDA (LIST) (CL:DECLARE (cl:IGNORE LIST)) (cl:values)))
 
-(ESRAP:DEFRULE PG::ENDOFFILEFORTEST (ESRAP:! esrap::CHARACTER)
-  (:LAMBDA (LIST) (CL:DECLARE (cl:IGNORE LIST)) (values)))

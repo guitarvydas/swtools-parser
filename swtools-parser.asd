@@ -10,4 +10,5 @@
 	       (:file "futil")
                (:file "peg")
 	       (:file "write-qualified")
+               (:file "tester")
                (:file "create-swtools-parser")))
