@@ -476,30 +476,20 @@ COMMENT_1 <- '(*' .* '*)'
 COMMENT_2 <- '{' NotBrace+ '}'
 NotBrace <- !'}' .
 
-
-
 IDENT <- !keyword [A-Za-z] [A-Z-a-z0-9_]* Spacing
 
 STRING_LITERAL
     <- ['] [!']* [']
 #   <- '\'' ('\'\'' / ~ ('\''))* '\''
 
-
-
 NUM_INT <- [0-9]+
-
-
-
 NUM_REAL <- [0-9]+ EXPONENT /
       [0-9]+ '.' [0-9]+ EXPONENT? /
       EXPONENT
 #(('.' ('0' .. '9') + (EXPONENT)?)? / EXPONENT)
 
-
-
 EXPONENT <- 'e' ('+' / '-')? [0-9]+
 #   <- ('e') ('+' / '-')? ('0' .. '9') +
-
 
 FILE_CUT <- '-h-' Spacing DIR* FILENAME FILEEXT Spacing NUM_INT EndOfLine
 
