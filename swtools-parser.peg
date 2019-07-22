@@ -40,7 +40,7 @@
 
 
 #programHeading
-#   <- PROGRAM identifier (LPAREN identifierList RPAREN)? SEMI
+#   <- tokPROGRAM identifier (LPAREN identifierList RPAREN)? SEMI
 #    /UNIT identifier SEMI
 
 swToolsPrograms <- swToolsProgram+ EndOfFile
@@ -56,7 +56,7 @@ block <- (labelDeclarationPart / constantDefinitionPart / typeDefinitionPart / v
 usesUnitsPart <- USES identifierList SEMI
 
 
-labelDeclarationPart <- LABEL label (COMMA label)* SEMI
+labelDeclarationPart <- tokLABEL label (COMMA label)* SEMI
 
 
 label <- unsignedInteger
@@ -100,7 +100,7 @@ bool <- tokTRUE
 string <- STRING_LITERAL
 
 
-typeDefinitionPart <- TYPE (typeDefinition SEMI) +
+typeDefinitionPart <- tokTYPE (typeDefinition SEMI) +
 
 
 typeDefinition <- identifier EQUAL (type / functionType / procedureType)
@@ -109,7 +109,7 @@ typeDefinition <- identifier EQUAL (type / functionType / procedureType)
 functionType <- tokFUNCTION (formalParameterList)? COLON resultType
 
 
-procedureType <- PROCEDURE (formalParameterList)?
+procedureType <- tokPROCEDURE (formalParameterList)?
 
 
 type <- simpleType
@@ -130,10 +130,10 @@ subrangeType <- constant tokDOTDOT constant
 
 
 typeIdentifier <- identifier
-   / (tokCHAR / tokBOOLEAN / tokINTEGER / REAL / STRING)
+   / (tokCHAR / tokBOOLEAN / tokINTEGER / tokREAL / STRING)
 
 
-structuredType <- PACKED unpackedStructuredType
+structuredType <- tokPACKED unpackedStructuredType
    / unpackedStructuredType
 
 
@@ -146,8 +146,8 @@ unpackedStructuredType <- arrayType
 stringtype <- STRING LBRACK (identifier / unsignedNumber) RBRACK
 
 
-arrayType <- tokARRAY LBRACK typeList RBRACK OF componentType
-   / tokARRAY LBRACK2 typeList RBRACK2 OF componentType
+arrayType <- tokARRAY LBRACK typeList RBRACK tokOF componentType
+   / tokARRAY LBRACK2 typeList RBRACK2 tokOF componentType
 
 
 typeList <- indexType (COMMA indexType)*
@@ -159,7 +159,7 @@ indexType <- simpleType
 componentType <- type
 
 
-recordType <- RECORD fieldList? tokEND
+recordType <- tokRECORD fieldList? tokEND
 
 
 fieldList <- fixedPart (SEMI variantPart)?
@@ -172,7 +172,7 @@ fixedPart <- recordSection (SEMI recordSection)*
 recordSection <- identifierList COLON type
 
 
-variantPart <- tokCASE tag OF variant (SEMI variant)*
+variantPart <- tokCASE tag tokOF variant (SEMI variant)*
 
 
 tag <- identifier COLON typeIdentifier
@@ -182,13 +182,13 @@ tag <- identifier COLON typeIdentifier
 variant <- constList COLON LPAREN fieldList RPAREN
 
 
-setType <- SET OF baseType
+setType <- tokSET tokOF baseType
 
 
 baseType <- simpleType
 
 
-fileType <- tokFILE OF type
+fileType <- tokFILE tokOF type
    / tokFILE
 
 
@@ -208,7 +208,7 @@ procedureOrFunctionDeclaration <- procedureDeclaration
    / functionDeclaration
 
 
-procedureDeclaration <- PROCEDURE identifier Spacing (formalParameterList)? SEMI block
+procedureDeclaration <- tokPROCEDURE identifier Spacing (formalParameterList)? SEMI block
 
 
 formalParameterList <- LPAREN formalParameterSection (SEMI formalParameterSection)* RPAREN
@@ -217,7 +217,7 @@ formalParameterList <- LPAREN formalParameterSection (SEMI formalParameterSectio
 formalParameterSection <- parameterGroup
    / VAR parameterGroup
    / tokFUNCTION parameterGroup
-   / PROCEDURE parameterGroup
+   / tokPROCEDURE parameterGroup
 
 
 parameterGroup <- identifierList Spacing COLON typeIdentifier
@@ -263,7 +263,7 @@ relationaloperator <- EQUAL
    / tokLE
    / GE
    / GT
-   / IN
+   / tokIN
 
 
 simpleExpression <- term (additiveoperator simpleExpression)?
@@ -271,14 +271,14 @@ simpleExpression <- term (additiveoperator simpleExpression)?
 
 additiveoperator <- PLUS
    / MINUS
-   / OR
+   / tokOR
 
 term <- signedFactor (multiplicativeoperator term)?
 
 multiplicativeoperator <- STAR
    / SLASH
    / tokDIV
-   / MOD
+   / tokMOD
    / tokAND
 
 signedFactor <- (PLUS / MINUS)? factor
@@ -344,10 +344,10 @@ conditionalStatement <- ifStatement
    / caseStatement
 
 
-ifStatement <- tokIF expression THEN statement (tokELSE statement)?
+ifStatement <- tokIF expression tokTHEN statement (tokELSE statement)?
 
 
-caseStatement <- tokCASE expression OF caseListElement (SEMI caseListElement)* (SEMI tokELSE statements)? tokEND
+caseStatement <- tokCASE expression tokOF caseListElement (SEMI caseListElement)* (SEMI tokELSE statements)? tokEND
 
 
 caseListElement <- constList COLON statement
@@ -361,13 +361,13 @@ repetetiveStatement <- whileStatement
 whileStatement <- WHILE expression tokDO statement
 
 
-repeatStatement <- REPEAT statements UNTIL expression
+repeatStatement <- tokREPEAT statements UNTIL expression
 
 
 forStatement <- tokFOR identifier ASSIGN forList tokDO statement
 
 
-forList <- initialValue (TO / tokDOWNTO) finalValue
+forList <- initialValue (tokTO / tokDOWNTO) finalValue
 
 
 initialValue <- expression
@@ -400,23 +400,23 @@ tokFUNCTION <- 'function' Spacing
 tokGOTO <- 'goto' Spacing
 tokIF <- 'if' Spacing
 tokINTEGER <- 'integer' Spacing
-IN <- 'in' Spacing
-LABEL <- 'label' Spacing
-MOD <- 'mod' Spacing
+tokIN <- 'in' Spacing
+tokLABEL <- 'label' Spacing
+tokMOD <- 'mod' Spacing
 tokNIL <- 'nil' Spacing
 tokNOT <- 'not' Spacing
-OF <- 'of' Spacing
-OR <- 'or' Spacing
-PACKED <- 'packed' Spacing
-PROCEDURE <- 'procedure' Spacing
-PROGRAM <- 'program' Spacing
-REAL <- 'real' Spacing
-RECORD <- 'record' Spacing
-REPEAT <- 'repeat' Spacing
-SET <- 'set' Spacing
-THEN <- 'then' Spacing
-TO <- 'to' Spacing
-TYPE <- 'type' Spacing
+tokOF <- 'of' Spacing
+tokOR <- 'or' Spacing
+tokPACKED <- 'packed' Spacing
+tokPROCEDURE <- 'procedure' Spacing
+tokPROGRAM <- 'program' Spacing
+tokREAL <- 'real' Spacing
+tokRECORD <- 'record' Spacing
+tokREPEAT <- 'repeat' Spacing
+tokSET <- 'set' Spacing
+tokTHEN <- 'then' Spacing
+tokTO <- 'to' Spacing
+tokTYPE <- 'type' Spacing
 UNTIL <- 'until' Spacing
 VAR <- 'var' Spacing
 WHILE <- 'while' Spacing
