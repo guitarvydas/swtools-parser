@@ -75,7 +75,7 @@ constant <- unsignedNumber
    / sign unsignedNumber
    / identifier
    / sign identifier
-   / string
+   / mystring
    / constantChr
 
 
@@ -427,108 +427,31 @@ WITH <- 'with' Spacing
 PLUS <- '+' Spacing
 MINUS <- '-' Spacing
 
-
-
 STAR <- '*' Spacing
-
-
-
 SLASH <- '/' Spacing
-
-
-
 ASSIGN <- ':=' Spacing
-
-
-
 COMMA <- ',' Spacing
-
-
-
 SEMI <- ';' Spacing
-
-
-
 COLON <- ':' Spacing
-
-
-
 EQUAL <- '=' Spacing
-
-
-
 NOT_EQUAL <- '<>' Spacing
-
-
-
 LT <- '<' Spacing
-
-
-
 LE <- '<=' Spacing
-
-
-
 GE <- '>=' Spacing
-
-
-
 GT <- '>' Spacing
-
-
-
 LPAREN <- '(' Spacing
-
-
-
 RPAREN <- ')' Spacing
-
-
-
 LBRACK <- '[' Spacing
-
-
-
 LBRACK2 <- '(.' Spacing
-
-
-
 RBRACK <- ']' Spacing
-
-
-
 RBRACK2 <- '.)' Spacing
-
-
-
 POINTER <- '^' Spacing
-
-
-
 AT <- '@' Spacing
-
-
-
 DOT <- '.' Spacing
-
-
-
 DOTDOT <- '..' Spacing
-
-
-
 LCURLY <- '{' Spacing
-
-
-
 RCURLY <- '}' Spacing
-
-
-
 UNIT <- 'unit' Spacing
-
-
-
 INTERFACE <- 'interface' Spacing
 USES <- 'uses' Spacing
 STRING <- 'string' Spacing
