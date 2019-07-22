@@ -4,4 +4,5 @@
   :components ((:file "package")
 	       (:file "futil")
                (:file "peg")
+	       (:file "write-qualified")
                (:file "create-swtools-parser")))
