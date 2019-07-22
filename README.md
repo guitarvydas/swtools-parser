@@ -19,7 +19,7 @@ To use the code in this directory:
 
 (ql:quickload :swtools-parser)
 (swtools-parser:@create-swtools-parser 
-	  :peg-input-filename "swtools-parser.peg" 
-	  :output-lisp-filename "swtools-parser.lisp")
+	  :peg-input-filename (asdf:system-relative-pathname :swtools-parser "swtools-parser.peg")
+	  :output-lisp-filename (asdf:system-relative-pathname :swtools-parser "swtools-parser.lisp"))
 
 The quickload load everything needed to build a parser.  The second call (@create-swtools-parser) actually creates the parser and pours it into "swtools-parser.lisp".
