@@ -89,8 +89,8 @@ unsignedInteger <- NUM_INT
 unsignedReal <- NUM_REAL
 
 
-sign <- PLUS
-   / MINUS
+sign <- tokPLUS
+   / tokMINUS
 
 
 bool <- tokTRUE
@@ -130,7 +130,7 @@ subrangeType <- constant tokDOTDOT constant
 
 
 typeIdentifier <- identifier
-   / (tokCHAR / tokBOOLEAN / tokINTEGER / tokREAL / STRING)
+   / (tokCHAR / tokBOOLEAN / tokINTEGER / tokREAL / tokSTRING)
 
 
 structuredType <- tokPACKED unpackedStructuredType
@@ -143,7 +143,7 @@ unpackedStructuredType <- arrayType
    / fileType
 
 
-stringtype <- STRING LBRACK (identifier / unsignedNumber) RBRACK
+stringtype <- tokSTRING LBRACK (identifier / unsignedNumber) RBRACK
 
 
 arrayType <- tokARRAY LBRACK typeList RBRACK tokOF componentType
@@ -195,7 +195,7 @@ fileType <- tokFILE tokOF type
 pointerType <- POINTER typeIdentifier
 
 
-variableDeclarationPart <- VAR variableDeclaration (SEMI variableDeclaration)* SEMI
+variableDeclarationPart <- tokVAR variableDeclaration (SEMI variableDeclaration)* SEMI
 
 
 variableDeclaration <- identifierList COLON type
@@ -215,7 +215,7 @@ formalParameterList <- LPAREN formalParameterSection (SEMI formalParameterSectio
 
 
 formalParameterSection <- parameterGroup
-   / VAR parameterGroup
+   / tokVAR parameterGroup
    / tokFUNCTION parameterGroup
    / tokPROCEDURE parameterGroup
 
@@ -259,8 +259,8 @@ expression <- simpleExpression (relationaloperator expression)?
 
 relationaloperator <- EQUAL
    / NOT_EQUAL
-   / tokLT
-   / tokLE
+   / LT
+   / LE
    / GE
    / GT
    / tokIN
@@ -269,8 +269,8 @@ relationaloperator <- EQUAL
 simpleExpression <- term (additiveoperator simpleExpression)?
 
 
-additiveoperator <- PLUS
-   / MINUS
+additiveoperator <- tokPLUS
+   / tokMINUS
    / tokOR
 
 term <- signedFactor (multiplicativeoperator term)?
@@ -281,7 +281,7 @@ multiplicativeoperator <- STAR
    / tokMOD
    / tokAND
 
-signedFactor <- (PLUS / MINUS)? factor
+signedFactor <- (tokPLUS / tokMINUS)? factor
 
 factor <- variable
    / LPAREN expression RPAREN
@@ -358,10 +358,10 @@ repetetiveStatement <- whileStatement
    / forStatement
 
 
-whileStatement <- WHILE expression tokDO statement
+whileStatement <- tokWHILE expression tokDO statement
 
 
-repeatStatement <- tokREPEAT statements UNTIL expression
+repeatStatement <- tokREPEAT statements tokUNTIL expression
 
 
 forStatement <- tokFOR identifier ASSIGN forList tokDO statement
@@ -376,7 +376,7 @@ initialValue <- expression
 finalValue <- expression
 
 
-withStatement <- WITH recordVariableList tokDO statement
+withStatement <- tokWITH recordVariableList tokDO statement
 
 
 recordVariableList <- variable (COMMA variable)*
@@ -417,12 +417,12 @@ tokSET <- 'set' Spacing
 tokTHEN <- 'then' Spacing
 tokTO <- 'to' Spacing
 tokTYPE <- 'type' Spacing
-UNTIL <- 'until' Spacing
-VAR <- 'var' Spacing
-WHILE <- 'while' Spacing
-WITH <- 'with' Spacing
-PLUS <- '+' Spacing
-MINUS <- '-' Spacing
+tokUNTIL <- 'until' Spacing
+tokVAR <- 'var' Spacing
+tokWHILE <- 'while' Spacing
+tokWITH <- 'with' Spacing
+tokPLUS <- '+' Spacing
+tokMINUS <- '-' Spacing
 
 STAR <- '*' Spacing
 SLASH <- '/' Spacing
@@ -432,8 +432,8 @@ SEMI <- ';' Spacing
 COLON <- ':' Spacing
 EQUAL <- '=' Spacing
 NOT_EQUAL <- '<>' Spacing
-tokLT <- '<' Spacing
-tokLE <- '<=' Spacing
+LT <- '<' Spacing
+LE <- '<=' Spacing
 GE <- '>=' Spacing
 GT <- '>' Spacing
 LPAREN <- '(' Spacing
@@ -451,7 +451,7 @@ RCURLY <- '}' Spacing
 UNIT <- 'unit' Spacing
 INTERFACE <- 'interface' Spacing
 USES <- 'uses' Spacing
-STRING <- 'string' Spacing
+tokSTRING <- 'string' Spacing
 IMPLEMENTATION <- 'implementation' Spacing
 tokTRUE <- 'true' Spacing
 tokFALSE <- 'false' Spacing
@@ -479,8 +479,6 @@ NotBrace <- !'}' .
 
 
 IDENT <- !keyword [A-Za-z] [A-Z-a-z0-9_]* Spacing
-
-
 
 STRING_LITERAL
     <- ['] [!']* [']
