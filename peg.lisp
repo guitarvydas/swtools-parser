@@ -210,7 +210,7 @@
 
 (ESRAP:DEFRULE PG::COMMENT
                (CL:AND "#"
-                    (esrap:* (CL:AND (ESRAP:! PG::ENDOFLINE) PG::CHAR1))
+                    (esrap:* (CL:AND (ESRAP:! PG::ENDOFLINEFORNOT) PG::CHAR1))
                     (CL:OR PG::ENDOFLINE PG::ENDOFFILE))
   (:LAMBDA (LIST) (CL:DECLARE (cl:IGNORE LIST)) (cl:VALUES)))
 
@@ -228,4 +228,4 @@
   (:LAMBDA (LIST) (CL:DECLARE (cl:IGNORE LIST)) (cl:VALUES)))
 
 (ESRAP:DEFRULE PG::ENDOFFILE (ESRAP:! esrap::CHARACTER)
-  (:LAMBDA (LIST) (CL:DECLARE (cl:IGNORE LIST)) (cl:VALUES)))
+  (:LAMBDA (LIST) (CL:DECLARE (cl:IGNORE LIST)) cl:nil))
