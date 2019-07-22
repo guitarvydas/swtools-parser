@@ -36,7 +36,7 @@
 # grammar pascal;
 
 #program
-#   <- programHeading (INTERFACE)? block DOT
+#   <- programHeading (INTERFACE)? block tokDOT
 
 
 #programHeading
@@ -62,13 +62,13 @@ labelDeclarationPart <- LABEL label (COMMA label)* SEMI
 label <- unsignedInteger
 
 
-constantDefinitionPart <- CONST (constantDefinition SEMI) +
+constantDefinitionPart <- tokCONST (constantDefinition SEMI) +
 
 
 constantDefinition <- identifier EQUAL constant
 
 
-constantChr <- CHR LPAREN unsignedInteger RPAREN
+constantChr <- tokCHR LPAREN unsignedInteger RPAREN
 
 
 constant <- unsignedNumber
@@ -126,11 +126,11 @@ simpleType <- scalarType
 scalarType <- LPAREN identifierList RPAREN
 
 
-subrangeType <- constant DOTDOT constant
+subrangeType <- constant tokDOTDOT constant
 
 
 typeIdentifier <- identifier
-   / (CHAR / BOOLEAN / INTEGER / REAL / STRING)
+   / (tokCHAR / tokBOOLEAN / INTEGER / REAL / STRING)
 
 
 structuredType <- PACKED unpackedStructuredType
@@ -146,8 +146,8 @@ unpackedStructuredType <- arrayType
 stringtype <- STRING LBRACK (identifier / unsignedNumber) RBRACK
 
 
-arrayType <- ARRAY LBRACK typeList RBRACK OF componentType
-   / ARRAY LBRACK2 typeList RBRACK2 OF componentType
+arrayType <- tokARRAY LBRACK typeList RBRACK OF componentType
+   / tokARRAY LBRACK2 typeList RBRACK2 OF componentType
 
 
 typeList <- indexType (COMMA indexType)*
@@ -172,7 +172,7 @@ fixedPart <- recordSection (SEMI recordSection)*
 recordSection <- identifierList COLON type
 
 
-variantPart <- CASE tag OF variant (SEMI variant)*
+variantPart <- tokCASE tag OF variant (SEMI variant)*
 
 
 tag <- identifier COLON typeIdentifier
@@ -251,7 +251,7 @@ simpleStatement <- assignmentStatement
 assignmentStatement <- variable ASSIGN expression
 
 
-variable <- (AT identifier / identifier) (LBRACK expression (COMMA expression)* RBRACK / LBRACK2 expression (COMMA expression)* RBRACK2 / DOT identifier / POINTER)*
+variable <- (AT identifier / identifier) (LBRACK expression (COMMA expression)* RBRACK / LBRACK2 expression (COMMA expression)* RBRACK2 / tokDOT identifier / POINTER)*
 
 
 expression <- simpleExpression (relationaloperator expression)?
@@ -277,9 +277,9 @@ term <- signedFactor (multiplicativeoperator term)?
 
 multiplicativeoperator <- STAR
    / SLASH
-   / DIV
+   / tokDIV
    / MOD
-   / AND
+   / tokAND
 
 signedFactor <- (PLUS / MINUS)? factor
 
@@ -295,7 +295,7 @@ factor <- variable
 unsignedConstant <- unsignedNumber
    / constantChr
    / string
-   / cNIL
+   / tokNIL
 
 
 functionDesignator <- identifier LPAREN parameterList RPAREN
@@ -313,7 +313,7 @@ elementList <- elementLst?
 elementLst <- element (COMMA element)*
 
 
-element <- expression (DOTDOT expression)?
+element <- expression (tokDOTDOT expression)?
 
 
 procedureStatement <- identifier (LPAREN parameterList RPAREN)?
@@ -334,7 +334,7 @@ structuredStatement <- compoundStatement
    / withStatement
 
 
-compoundStatement <- BEGIN statements END
+compoundStatement <- tokBEGIN statements END
 
 
 statements <- statement (SEMI statement)*
@@ -344,10 +344,10 @@ conditionalStatement <- ifStatement
    / caseStatement
 
 
-ifStatement <- IF expression THEN statement (ELSE statement)?
+ifStatement <- IF expression THEN statement (tokELSE statement)?
 
 
-caseStatement <- CASE expression OF caseListElement (SEMI caseListElement)* (SEMI ELSE statements)? END
+caseStatement <- tokCASE expression OF caseListElement (SEMI caseListElement)* (SEMI tokELSE statements)? END
 
 
 caseListElement <- constList COLON statement
@@ -358,16 +358,16 @@ repetetiveStatement <- whileStatement
    / forStatement
 
 
-whileStatement <- WHILE expression DO statement
+whileStatement <- WHILE expression tokDO statement
 
 
 repeatStatement <- REPEAT statements UNTIL expression
 
 
-forStatement <- FOR identifier ASSIGN forList DO statement
+forStatement <- FOR identifier ASSIGN forList tokDO statement
 
 
-forList <- initialValue (TO / DOWNTO) finalValue
+forList <- initialValue (TO / tokDOWNTO) finalValue
 
 
 initialValue <- expression
@@ -376,26 +376,23 @@ initialValue <- expression
 finalValue <- expression
 
 
-withStatement <- WITH recordVariableList DO statement
+withStatement <- WITH recordVariableList tokDO statement
 
 
 recordVariableList <- variable (COMMA variable)*
 
-
-
-
-AND <- 'and'
-ARRAY <- 'array' Spacing
-BEGIN <- 'begin' Spacing
-BOOLEAN <-'boolean' Spacing
-CASE <- 'case' Spacing
-CHAR <- 'char' Spacing
-CHR <- 'chr' Spacing
-CONST <- 'const' Spacing
-DIV <- 'div' Spacing
-DOWNTO <- 'downto' Spacing
-DO <- 'do' Spacing
-ELSE <- 'else' Spacing
+tokAND <- 'and'
+tokARRAY <- 'array' Spacing
+tokBEGIN <- 'begin' Spacing
+tokBOOLEAN <-'boolean' Spacing
+tokCASE <- 'case' Spacing
+tokCHAR <- 'char' Spacing
+tokCHR <- 'chr' Spacing
+tokCONST <- 'const' Spacing
+tokDIV <- 'div' Spacing
+tokDOWNTO <- 'downto' Spacing
+tokDO <- 'do' Spacing
+tokELSE <- 'else' Spacing
 END <- 'end' Spacing
 FILE <- 'file' Spacing
 FOR <- 'for' Spacing
@@ -406,7 +403,7 @@ INTEGER <- 'integer' Spacing
 IN <- 'in' Spacing
 LABEL <- 'label' Spacing
 MOD <- 'mod' Spacing
-cNIL <- 'nil' Spacing
+tokNIL <- 'nil' Spacing
 NOT <- 'not' Spacing
 OF <- 'of' Spacing
 OR <- 'or' Spacing
@@ -447,8 +444,8 @@ RBRACK <- ']' Spacing
 RBRACK2 <- '.)' Spacing
 POINTER <- '^' Spacing
 AT <- '@' Spacing
-DOT <- '.' Spacing
-DOTDOT <- '..' Spacing
+tokDOT <- '.' Spacing
+tokDOTDOT <- '..' Spacing
 LCURLY <- '{' Spacing
 RCURLY <- '}' Spacing
 UNIT <- 'unit' Spacing
