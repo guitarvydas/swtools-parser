@@ -92,8 +92,8 @@ sign <- PLUS
    / MINUS
 
 
-bool <- TRUE
-   / FALSE
+bool <- rTRUE
+   / rFALSE
 
 
 string <- STRING_LITERAL
@@ -532,8 +532,8 @@ INTERFACE <- 'interface' Spacing
 USES <- 'uses' Spacing
 STRING <- 'string' Spacing
 IMPLEMENTATION <- 'implementation' Spacing
-TRUE <- 'true' Spacing
-FALSE <- 'false' Spacing
+rTRUE <- 'true' Spacing
+rFALSE <- 'false' Spacing
 
 keyword <- ('and' / 'array' / 'begin' / 'boolean' / 'case' / 'char' / 
 	 'chr' / 'const' / 'div' / 'do' / 'downto' / 'else' / 'end' / 'file' /
