@@ -381,7 +381,7 @@ withStatement <- tokWITH recordVariableList tokDO statement
 
 recordVariableList <- variable (COMMA variable)*
 
-tokAND <- 'and'
+tokAND <- 'and' Spacing
 tokARRAY <- 'array' Spacing
 tokBEGIN <- 'begin' Spacing
 tokBOOLEAN <-'boolean' Spacing
@@ -432,10 +432,10 @@ SEMI <- ';' Spacing
 COLON <- ':' Spacing
 EQUAL <- '=' Spacing
 NOT_EQUAL <- '<>' Spacing
-LT <- '<' Spacing
 LE <- '<=' Spacing
+LT <- !LE '<' Spacing
 GE <- '>=' Spacing
-GT <- '>' Spacing
+GT <- !GE '>' Spacing
 LPAREN <- '(' Spacing
 RPAREN <- ')' Spacing
 LBRACK <- '[' Spacing
@@ -476,7 +476,7 @@ COMMENT_1 <- '(*' .* '*)'
 COMMENT_2 <- '{' NotBrace+ '}'
 NotBrace <- !'}' .
 
-IDENT <- !keyword [A-Za-z] [A-Z-a-z0-9_]* Spacing
+IDENT <- !keyword Spacing [A-Za-z] [A-Z-a-z0-9_]* Spacing
 
 STRING_LITERAL
     <- ['] [!']* [']

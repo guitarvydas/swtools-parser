@@ -1,5 +1,4 @@
 (DEFPACKAGE :PEG-GRAMMAR 
-  ;(:use :common-lisp)
   (:nicknames "PG" "pg")
   (:export
    #:peg-grammar))
